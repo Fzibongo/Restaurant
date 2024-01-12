@@ -14,26 +14,58 @@ import {
 
   export default function Login({ navigation }) {
     const [isSelected, setSelection] = useState(false);
-
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
-    const GoToMenu = (() =>{
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in 
-        alert("Successfully Logged In")
-        navigation.navigate('Menu')
-        const user = userCredential.user;
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-      });
-    })
-
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+  
+    const validateEmail = () => {
+      setEmailError('');
+      if (!email) {
+        setEmailError('Please enter your email.');
+      } else if (!isValidEmail(email)) {
+        setEmailError('Please enter a valid email address.');
+      }
+    };
+  
+    const validatePassword = () => {
+      setPasswordError('');
+      if (!password) {
+        setPasswordError('Please enter your password.');
+      } else if (password.length < 6) {
+        setPasswordError('Password must be at least 6 characters long.');
+      }
+    };
+  
+    const isValidEmail = (value) => {
+      // Your email validation logic (use regex or any other method)
+      // Example:
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(value);
+    };
+  
+    const GoToMenu = () => {
+      validateEmail();
+      validatePassword();
+  
+      if (emailError || passwordError) {
+        return; // Stop the function if there are validation errors
+      }
+  
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in
+          alert('Successfully Logged In');
+          navigation.navigate('Menu');
+          const user = userCredential.user;
+        })
+        .catch((error) => {
+          const errorMessage = error.message;
+          alert(`Login failed: ${errorMessage}`);
+        });
+    };
+  
+    
     return (
       <View style={styles.mainContainer}>
         <View>
@@ -44,9 +76,21 @@ import {
         </View>
          <Text style={styles.header}>LOG IN</Text>
         <View>
-          <TextInput style={styles.input1} onChangeText={setEmail} placeholder="Email" />
-          <br></br>
-          <TextInput style={styles.input2} onChangeText={setPassword} placeholder="Password" />
+        <TextInput
+        style={styles.input1}
+        onChangeText={(text) => setEmail(text)}
+        onBlur={validateEmail}
+        placeholder="Email"
+      />
+      <Text style={styles.errorText}>{emailError}</Text>
+      <TextInput
+        style={styles.input2}
+        onChangeText={(text) => setPassword(text)}
+        onBlur={validatePassword}
+        placeholder="Password"
+        secureTextEntry={true}
+      />
+      <Text style={styles.errorText}>{passwordError}</Text>
         </View>
   
         <View style={styles.box}>
@@ -101,23 +145,28 @@ import {
     },
   
     input1: {
-      alignSelf:'center',
+      alignSelf: 'center',
       textAlign: 'center',
       backgroundColor: 'silver',
       width: 250,
-     
       height: 50,
       marginTop: 20,
     },
-
+  
     input2: {
-      alignSelf:'center',
+      alignSelf: 'center',
       textAlign: 'center',
       backgroundColor: 'silver',
       width: 250,
-      
       height: 50,
       marginTop: 5,
+    },
+  
+    errorText: {
+      color: 'red',
+      marginTop: 5,
+      marginBottom: 10,
+      textAlign: 'center',
     },
   
     LoginText: {
@@ -163,11 +212,4 @@ import {
     checkbox: {
       alignSelf: 'center',
     },
-  });     {/* <View style={{flexDirection: 'row'}}>
-                  <CheckBox
-            value={isSelected}
-            onValueChange={setSelection}
-            style={styles.checkbox}
-          />
-            <Text style={styles.Remember}> Remember me </Text>
-          </View> */}
+  });    

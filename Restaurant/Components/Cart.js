@@ -14,7 +14,7 @@ import { useState, useEffect } from 'react';
 
 
 export default function Cart({ navigation, route }) {
-    const { data, count } = route.params;
+    const { data, count, totalPrice } = route.params;
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
 
@@ -25,14 +25,14 @@ export default function Cart({ navigation, route }) {
             const docRef = await addDoc(collection(db, "Checkout"+authUser.uid), {
               owner_uid: authUser.uid,
               Name: data.name,
-              Price: data.price,
+              Price: totalPrice,
               Image: data.image,
               Amount: count,
               Profile: name,
               Address: address
             });
             console.log("Document written with ID: ", docRef.id);
-            navigation.navigate('Cart', {data: data, count: count});
+            navigation.navigate('ThankYou', {data: data, count: count});
           } else {
             console.error("User not authenticated");
           }
@@ -57,7 +57,7 @@ export default function Cart({ navigation, route }) {
             }} >
                 <Text style={styles.count}>{count}</Text>
                 <Text style={styles.name}>{data.name}</Text>
-                <Text style={styles.price}>{data.price}</Text>
+                <Text style={styles.price}>{totalPrice}</Text>
             </View>
 
             <View style={styles.info}>

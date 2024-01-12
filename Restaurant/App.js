@@ -16,6 +16,7 @@ import Fish from './Components/Fish';
 import Rice from './Components/Rice';
 import Checkout from './Components/Checkout';
 import Cart from './Components/Cart';
+import ThankYou from './Components/ThankYou';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,12 +24,12 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
       <NavigationContainer >
-      <Stack.Navigator initialRouteName="login">
+      <Stack.Navigator initialRouteName="LogIn" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="LogIn" component={LogIn} />
       <Stack.Screen name="Menu" component={Menu} />
         <Stack.Screen name="Cart" component={Cart} />
         <Stack.Screen name="Sign up" component={Sign} />
-        
+        <Stack.Screen name="ThankYou" component={ThankYou} />
         <Stack.Screen name="Salmon" component={Salmon} />
         <Stack.Screen name="Goose" component={Goose} />
         <Stack.Screen name="Avocado" component={Avocado} />
